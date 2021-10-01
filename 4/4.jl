@@ -1,3 +1,9 @@
+function count_move!(r, side :: HorizonSide, count)
+    for i = 1:count 
+        move!(r,side)
+    end 
+end
+
 function move_count_mark!(r,side::HorizonSide, level, len)
     for i in 1:(len - level)
         putmarker!(r)
@@ -29,27 +35,30 @@ function move_mark_to_side!(r,side::HorizonSide)
 end
 
 
-function movements_to_zero!(r, ost_m, nord_m)
-
-    movements_to_side!(r, West)
-    movements_to_side!(r, Sud)
-
-    for i = 1:nord_m
-        move!(r,Nord)
+function corner(r)
+    x = 0
+    y = 0
+    while (isborder(r, Sud) == false) || (isborder(r, West) == false)
+        y = y + movements_to_side!(r, Sud)
+        x = x + movements_to_side!(r, West)
     end
-    for i = 1:ost_m
-        move!(r,Ost)
-    end
+    return x, y
+end
 
+function go_home!(r, x, y)
+    corner(r)
+    count_move!(r, Nord, y)
+    count_move!(r, Ost, x)
 end
 
 function ladder(r)
 
     level = 1
     len = 0
+    x = 0
+    y = 0
 
-    ost_m = movements_to_side!(r, West)
-    nord_m = movements_to_side!(r, Sud)
+    x, y = corner(r)
 
     len = move_mark_to_side!(r, Ost)
     movements_to_side!(r, West)
@@ -61,7 +70,7 @@ function ladder(r)
         level = level + 1
     end
 
-    movements_to_zero!(r, ost_m, nord_m)
+    go_home!(r, x, y)
     
 end
 

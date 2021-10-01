@@ -7,7 +7,7 @@ function movements_to_side(r, side :: HorizonSide)
     return count
 end
 
-function ugol(r)
+function ugol!(r)
 
     home = Int[]
 
@@ -27,14 +27,14 @@ function count_move!(r, side :: HorizonSide, count)
     end
 end
 
-function go_home(r, home)
+function go_home!(r, home)
     reverse!(home)
 
     for i in 1: length(home)
         if i % 2 == 0
-            count_move(r, Nord, home[i])
+            count_move!(r, Nord, home[i])
         else
-            count_move(r, Ost, home[i])
+            count_move!(r, Ost, home[i])
         end
     end 
 end
@@ -42,14 +42,14 @@ end
 function corners(r)
 
     home = Int[]
-    home = ugol(r)
+    home = ugol!(r)
 
     for side in (Nord, Ost, Sud, West)
         movements_to_side!(r, side)
         putmarker!(r)
     end
 
-    go_home(r,home)
+    go_home!(r,home)
 
 end
 
