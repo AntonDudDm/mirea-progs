@@ -19,20 +19,32 @@ function movements_to_side!(r, side :: HorizonSide)
     return count
 end
 
-function corner(r)
-    x = 0
-    y = 0
+function home_path!(r)
+
+    home = Int[]
+
     while (isborder(r, Nord) == false) || (isborder(r, West) == false)
-        y = y + movements_to_side!(r, Nord)
-        x = x + movements_to_side!(r, West)
+        s = movements_to_side!(r, Nord)
+        w = movements_to_side!(r, West)
+        push!(home, s)
+        push!(home, w)
     end
-    return x, y
+    return home
 end
 
-function go_home!(r, x, y)
-    corner(r)
-    count_move!(r, Sud, y)
-    count_move!(r, Ost, x)
+function go_home!(r, home)
+
+    home_path!(r)
+
+    reverse!(home)
+
+    for i in 1: length(home)
+        if i % 2 == 0
+            count_move!(r, Sud, home[i])
+        else
+            count_move!(r, Ost, home[i])
+        end
+    end 
 end
 
 function find_move!(r, side :: HorizonSide, border_side :: HorizonSide)
@@ -78,16 +90,14 @@ function perimetr(r)
 end
 
 function all_perimetr(r)
-    x = 0
-    y = 0
-    x, y = corner(r)
+    home = Int[]
+
+    home = home_path!(r)
     find(r)
     perimetr(r) 
-    go_home!(r, x, y)
+    go_home!(r, home)
 
 end
 
 all_perimetr(r)
 show(r)
-
-#7 задача подсказка, сумма координат четна или нечетна
